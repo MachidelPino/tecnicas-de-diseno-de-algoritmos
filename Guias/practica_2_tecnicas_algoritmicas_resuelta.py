@@ -97,4 +97,80 @@ def king_army(n: int):
             return memo[i]
     
     return f(n)
-print(king_army(5))
+#print(king_army(5))
+
+# Ejercicio 10 #
+def vacations(dias: int, gym: dict, comp: dict):
+    memo: dict = {}
+    INF = 10**9
+
+    def f(i, last):
+        if i > dias - 1:
+            return 0
+        
+        key = (i, last)
+        if key in memo:
+            return memo[key]
+        
+        mejor = INF
+
+        cand = 1 + f(i+1, 0)
+        if cand < mejor:
+            mejor = cand
+        
+        if gym[i] == 1 and last != 1:
+            cand = f(i+1, 1)
+            if cand < mejor:
+                mejor = cand
+            
+        if comp[i] == 1 and last != 2:
+            cand = f(i+1, 2)
+            if cand < mejor:
+                mejor = cand
+
+        memo[key] = mejor
+        return memo[key]
+
+    
+    return f(1, 0)
+
+#print(vacations(6, {1:1,2:1,3:0,4:1,5:1,6:1}, {1:1,2:1,3:1,4:0,5:1,6:1}))
+
+def suma_dinamica(c, k):
+    memo: dict = {}
+    n = len(c)
+
+    def top_down(i, j):
+        if j < 0:
+            return False
+        if i == n:
+            return j == 0
+        
+        key = i, j
+        if key not in memo:
+            memo[key] = top_down(i+1, j) or top_down(i+1, j - c[i])
+        
+        return memo[key]
+        
+    return top_down(0,k)
+
+#print(suma_dinamica([6,12,6], 12))
+
+def optipago_bt(billetes: list[int], costo: int):
+    n = len(billetes)
+    mejor_minimo = (float("inf"), float("inf"))
+
+    def backtrack(cant_billetes: int, costo_parcial: int, i):
+        nonlocal mejor_minimo
+        if i == n:
+            if costo_parcial >= costo:
+                mejor_minimo = min(mejor_minimo, (costo_parcial, cant_billetes))
+        else:
+            backtrack(cant_billetes, costo_parcial, i+1)
+            backtrack(cant_billetes + 1, costo_parcial + billetes[i], i+1)
+    
+    backtrack(0, 0, 0)
+    return mejor_minimo
+
+#print(optipago_bt([2,3,5,10,20,20], 14))
+
